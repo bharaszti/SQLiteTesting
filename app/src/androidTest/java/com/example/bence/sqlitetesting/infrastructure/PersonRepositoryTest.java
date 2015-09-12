@@ -4,12 +4,14 @@ import android.test.AndroidTestCase;
 
 import com.example.bence.sqlitetesting.domain.Person;
 import com.example.bence.sqlitetesting.util.UtcDateFormat;
-
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by bence on 29.08.15.
+ *
+ * See SQLite data types:
+ * http://www.4js.com/online_documentation/fjs-fgl-manual-html/c_fgl_odiagsqt_data_dictionary.html
  */
 public class PersonRepositoryTest extends AndroidTestCase {
     private PersonRepository repository;
@@ -17,8 +19,8 @@ public class PersonRepositoryTest extends AndroidTestCase {
     private UtcDateFormat utcDateFormat;
 
     /*
-        TODO: SQL statements for:
-         - createPerson DB
+        SQL statements for:
+         - create DB
          - drop DB
          - insert
          - select
@@ -29,7 +31,13 @@ public class PersonRepositoryTest extends AndroidTestCase {
 
         TODO: setup and teardown of test cases (createPerson fresh DB for each test case)
 
-        TODO: write and read all data types
+        Write and read all data types
+         - INTEGER
+         - TEXT
+         - DATE
+         - DATETIME
+         - FLOAT
+         - BLOB
 
         TODO: how to use a test DB instance?
 
@@ -101,28 +109,64 @@ public class PersonRepositoryTest extends AndroidTestCase {
         helper.assertPersons(persisted, person2);
     }
 
-    public void testShouldPersistDateTime() {
+    public void testShouldUpdateEntry() {
         // given
-        Date dateTime = utcDateFormat.parseDateTime("2001-02-03 04:05:06.000");
-        Person expected = new Person(1, "Somebody", dateTime);
+        Person person1 = new Person();
+        person1.setId(1);
+        person1.setName("Smith");
+        person1.setBirthday(utcDateFormat.parseDate("2001-02-03"));
+        person1.setTimestamp(utcDateFormat.parseDateTime("2001-02-03 04:05:06.123"));
+        person1.setWeight(12.34f);
+        person1.setImageAsBytes("image".getBytes());
 
-        repository.createPerson(expected);
+        Person person2 = new Person();
+        person2.setId(1);
+        person2.setName("Braun");
+        person2.setBirthday(utcDateFormat.parseDate("2015-02-03"));
+        person2.setTimestamp(utcDateFormat.parseDateTime("2015-02-03 04:05:06.123"));
+        person2.setWeight(45.67f);
+        person2.setImageAsBytes("picture".getBytes());
+
+        repository.createPerson(person1);
 
         // when
-        Person persisted = repository.getPersonById(1);
+        repository.updatePerson(person2);
 
         // then
-        assertEquals(dateTime, persisted.getTimestamp());
+        List<Person> persisted = repository.getAllPersons();
+        helper.assertPersons(persisted, person2);
     }
 
-    public void testShouldPersistDateTimeForNull() {
+    public void testShouldPersistTimestamp() {
         // given
-        Person expected = new Person(1, "Somebody", null);
+        int id = 1;
+        Date timestamp = utcDateFormat.parseDateTime("2001-02-03 04:05:06.123");
 
-        repository.createPerson(expected);
+        Person person = new Person();
+        person.setId(id);
+        person.setTimestamp(timestamp);
+
+        repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(1);
+        Person persisted = repository.getPersonById(id);
+
+        // then
+        assertEquals(timestamp, persisted.getTimestamp());
+    }
+
+    public void testShouldPersistEmptyTimestamp() {
+        // given
+        int id = 1;
+
+        Person person = new Person();
+        person.setId(id);
+        person.setTimestamp(null);
+
+        repository.createPerson(person);
+
+        // when
+        Person persisted = repository.getPersonById(id);
 
         // then
         assertNull(persisted.getTimestamp());
@@ -130,18 +174,108 @@ public class PersonRepositoryTest extends AndroidTestCase {
 
     public void testShouldPersistDate() {
         // given
+        int id = 1;
         Date birthday = utcDateFormat.parseDate("2001-02-03");
-        Person expected = new Person(1, "Somebody", null, birthday);
 
-        repository.createPerson(expected);
+        Person person = new Person();
+        person.setId(id);
+        person.setBirthday(birthday);
+
+        repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(1);
+        Person persisted = repository.getPersonById(id);
 
         // then
         assertEquals(birthday, persisted.getBirthday());
-        assertEquals("2001-02-03 00:00:00.000", utcDateFormat.formatDateTime(persisted.getBirthday()));
     }
 
+    public void testShouldPersistEmptyDate() {
+        // given
+        int id = 1;
+
+        Person person = new Person();
+        person.setId(id);
+        person.setBirthday(null);
+
+        repository.createPerson(person);
+
+        // when
+        Person persisted = repository.getPersonById(id);
+
+        // then
+        assertNull(persisted.getBirthday());
+    }
+
+    public void testShouldPersistFloat() {
+        // given
+        int id = 2;
+        Float weight = 71.567f;
+
+        Person person = new Person();
+        person.setId(id);
+        person.setWeight(weight);
+
+        repository.createPerson(person);
+
+        // when
+        Person persisted = repository.getPersonById(id);
+
+        // then
+        assertEquals(weight, persisted.getWeight());
+    }
+
+    public void testShouldPersistEmptyFloat() {
+        // given
+        int id = 3;
+
+        Person person = new Person();
+        person.setId(id);
+        person.setWeight(null);
+
+        repository.createPerson(person);
+
+        // when
+        Person persisted = repository.getPersonById(id);
+
+        // then
+        assertNull(persisted.getWeight());
+    }
+
+    public void testShouldPersistByteArray() {
+        // given
+        int id = 3;
+        String dataString = "hello";
+        byte[] dataBytes = dataString.getBytes();
+
+        Person person = new Person();
+        person.setId(id);
+        person.setImageAsBytes(dataBytes);
+
+        repository.createPerson(person);
+
+        // when
+        Person persisted = repository.getPersonById(id);
+
+        // then
+        assertEquals(dataString, new String(persisted.getImageAsBytes()));
+    }
+
+    public void testShouldPersistEmptyByteArray() {
+        // given
+        int id = 3;
+
+        Person person = new Person();
+        person.setId(id);
+        person.setImageAsBytes(null);
+
+        repository.createPerson(person);
+
+        // when
+        Person persisted = repository.getPersonById(id);
+
+        // then
+        assertNull(persisted.getImageAsBytes());
+    }
 
 }

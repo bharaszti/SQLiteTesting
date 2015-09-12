@@ -11,17 +11,24 @@ import java.util.TimeZone;
 public class UtcDateFormat {
     private static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static SimpleDateFormat DATETIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     static {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
         DATETIME_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     public String formatDateTime(Date date) {
+        if (date == null) {
+            return null;
+        }
         String result = DATETIME_FORMAT.format(date);
         return result;
     }
 
     public String formatDate(Date date) {
+        if (date == null) {
+            return null;
+        }
         String result = DATE_FORMAT.format(date);
         return result;
     }
@@ -40,9 +47,11 @@ public class UtcDateFormat {
         Date date = null;
         if (dateTimeString != null) {
             try {
-                date = dateFormat.parse(dateTimeString );
+                date = dateFormat.parse(dateTimeString);
             } catch (ParseException e) {
-                e.printStackTrace();
+                String message = String.format("Unable to parse '%s' with pattern '%s'.",
+                        dateTimeString, dateFormat.toPattern());
+                throw new RuntimeException(message);
             }
         }
         return date;

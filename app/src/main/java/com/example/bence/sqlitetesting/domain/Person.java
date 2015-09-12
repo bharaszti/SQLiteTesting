@@ -10,24 +10,12 @@ import java.util.Date;
  * Created by bence on 31.08.15.
  */
 public class Person {
-    private final int id;
-    private final String name;
-    private final Date timestamp;
-    private final Date birthday;
-
-    public Person(int id, String name, Date timestamp, Date birthday) {
-        this.id = id;
-        this.name = name;
-        this.timestamp = timestamp;
-        this.birthday = birthday;
-    }
-
-    public Person(int id, String name, Date timestamp) {
-        this.id = id;
-        this.name = name;
-        this.timestamp = timestamp;
-        this.birthday = null;
-    }
+    private Integer id;
+    private String name;
+    private Date timestamp;
+    private Date birthday;
+    private Float weight;
+    private byte[] imageAsBytes;
 
     public Person(int id, String name) {
         this.id = id;
@@ -36,16 +24,59 @@ public class Person {
         this.birthday = null;
     }
 
+    public Person() {
+        this.id = 0;
+        this.name = null;
+        timestamp = null;
+        this.birthday = null;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public Float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Float weight) {
+        this.weight = weight;
+    }
+
+    public byte[] getImageAsBytes() {
+        return imageAsBytes;
+    }
+
+    public void setImageAsBytes(byte[] imageAsBytes) {
+        this.imageAsBytes = imageAsBytes;
     }
 
     @Override
@@ -58,7 +89,4 @@ public class Person {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
 }

@@ -22,8 +22,10 @@ public class PersonDBHelper extends SQLiteOpenHelper {
                 "    id INTEGER NOT NULL PRIMARY KEY, \n" +
                 "    name TEXT, \n" +
                 "    parentId INTEGER, \n" +
-                "    timestamp DATETIME, \n" +
-                "    birthday DATE \n" +
+                "    timestamp TIMESTAMP, \n" +
+                "    birthday DATE, \n" +
+                "    weight REAL, \n" +
+                "    image BLOB \n" +
                 "    );";
         db.execSQL(sql);
     }

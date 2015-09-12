@@ -40,17 +40,17 @@ public class PersonRepository {
         ContentValues contentValues = new ContentValues();
         contentValues.put("id", person.getId());
         contentValues.put("name", person.getName());
-        if (person.getTimestamp() != null)
-            contentValues.put("timestamp", utcDateFormat.formatDateTime(person.getTimestamp()));
-        if (person.getBirthday() != null)
-            contentValues.put("birthday", utcDateFormat.formatDate(person.getBirthday()));
+        contentValues.put("timestamp", utcDateFormat.formatDateTime(person.getTimestamp()));
+        contentValues.put("birthday", utcDateFormat.formatDate(person.getBirthday()));
+        contentValues.put("weight", person.getWeight());
+        contentValues.put("image", person.getImageAsBytes());
         db.insert("person", null, contentValues);
     }
 
     public List<Person> getAllPersons() {
         List<Person> result = new ArrayList<>();
 
-        Cursor cursor = db.rawQuery("SELECT id, name, timestamp, birthday FROM person",
+        Cursor cursor = db.rawQuery("SELECT id, name, timestamp, birthday, weight, image FROM person",
                 new String[]{});
 
         while (cursor.moveToNext()) {
@@ -64,7 +64,7 @@ public class PersonRepository {
     public Person getPersonById(int id) {
         Person result = null;
 
-        Cursor cursor = db.rawQuery("SELECT id, name, timestamp, birthday FROM person WHERE id = ?",
+        Cursor cursor = db.rawQuery("SELECT id, name, timestamp, birthday, weight, image FROM person WHERE id = ?",
                 new String[]{String.valueOf(id)});
 
         if (cursor.moveToFirst()) {
@@ -78,11 +78,48 @@ public class PersonRepository {
         db.delete("person", "id = ?", new String[]{String.valueOf(id)});
     }
 
+    public void updatePerson(Person person) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", person.getId());
+        contentValues.put("name", person.getName());
+        contentValues.put("timestamp", utcDateFormat.formatDateTime(person.getTimestamp()));
+        contentValues.put("birthday", utcDateFormat.formatDate(person.getBirthday()));
+        contentValues.put("weight", person.getWeight());
+        contentValues.put("image", person.getImageAsBytes());
+
+        String[] parameter = new String[]{String.valueOf(person.getId())};
+
+        db.update("person", contentValues, "id = ?", parameter);
+    }
+
     private Person convertToPerson(Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndex("id"));
+
         String name = cursor.getString(cursor.getColumnIndex("name"));
+
         Date timestamp = utcDateFormat.parseDateTime(cursor.getString(cursor.getColumnIndex("timestamp")));
+
         Date birthday = utcDateFormat.parseDate(cursor.getString(cursor.getColumnIndex("birthday")));
-        return new Person(id, name, timestamp, birthday);
+
+        Float weight = null;
+        if (!cursor.isNull(cursor.getColumnIndex("weight"))) {
+            weight = cursor.getFloat(cursor.getColumnIndex("weight"));
+        }
+
+        byte[] imageAsBytes = null;
+        if (!cursor.isNull(cursor.getColumnIndex("image"))) {
+            imageAsBytes = cursor.getBlob(cursor.getColumnIndex("image"));
+        }
+
+        Person person = new Person();
+        person.setId(id);
+        person.setName(name);
+        person.setTimestamp(timestamp);
+        person.setBirthday(birthday);
+        person.setWeight(weight);
+        person.setImageAsBytes(imageAsBytes);
+
+        return person;
     }
+
 }
