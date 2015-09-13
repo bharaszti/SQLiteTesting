@@ -27,9 +27,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
          - delete
          - update
 
-        TODO: classes for contract and helper
-
-        TODO: setup and teardown of test cases (createPerson fresh DB for each test case)
+        Setup and teardown of test cases (createPerson fresh DB for each test case)
 
         Write and read all data types
          - INTEGER
@@ -38,6 +36,8 @@ public class PersonRepositoryTest extends AndroidTestCase {
          - DATETIME
          - FLOAT
          - BLOB
+
+        Classes for contract and helper: see http://developer.android.com/training/basics/data-storage/databases.html
 
         TODO: how to use a test DB instance?
 
@@ -87,7 +87,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person2);
 
         // when
-        Person persisted = repository.getPersonById(2);
+        Person persisted = repository.getPerson(2);
 
         // then
         assertEquals(person2, persisted);
@@ -102,7 +102,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person2);
 
         // when
-        repository.deletePersonById(1);
+        repository.deletePerson(1);
 
         // then
         List<Person> persisted = repository.getAllPersons();
@@ -149,7 +149,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertEquals(timestamp, persisted.getTimestamp());
@@ -166,7 +166,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertNull(persisted.getTimestamp());
@@ -184,7 +184,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertEquals(birthday, persisted.getBirthday());
@@ -201,7 +201,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertNull(persisted.getBirthday());
@@ -219,7 +219,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertEquals(weight, persisted.getWeight());
@@ -236,7 +236,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertNull(persisted.getWeight());
@@ -255,7 +255,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertEquals(dataString, new String(persisted.getImageAsBytes()));
@@ -272,7 +272,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         repository.createPerson(person);
 
         // when
-        Person persisted = repository.getPersonById(id);
+        Person persisted = repository.getPerson(id);
 
         // then
         assertNull(persisted.getImageAsBytes());

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.bence.sqlitetesting.domain.Person;
 import com.example.bence.sqlitetesting.util.UtcDateFormat;
+import static com.example.bence.sqlitetesting.infrastructure.PersonContract.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,14 +18,14 @@ import java.util.List;
  */
 public class PersonRepository {
     private final Context context;
-    private final UtcDateFormat utcDateFormat;
-    private final PersonDBHelper dbHelper;
+    private final PersonDbHelper dbHelper;
     private SQLiteDatabase db;
+
+    private final UtcDateFormat utcDateFormat = new UtcDateFormat();
 
     public PersonRepository(Context context) {
         this.context = context;
-        dbHelper = new PersonDBHelper(context);
-        utcDateFormat = new UtcDateFormat();
+        dbHelper = new PersonDbHelper(context);
     }
 
     public boolean open() {
@@ -33,82 +34,81 @@ public class PersonRepository {
     }
 
     public boolean drop() {
-        return context.deleteDatabase(PersonDBHelper.DATABASE_NAME);
+        return context.deleteDatabase(PersonDbHelper.DATABASE_NAME);
     }
 
     public void createPerson(Person person) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("id", person.getId());
-        contentValues.put("name", person.getName());
-        contentValues.put("timestamp", utcDateFormat.formatDateTime(person.getTimestamp()));
-        contentValues.put("birthday", utcDateFormat.formatDate(person.getBirthday()));
-        contentValues.put("weight", person.getWeight());
-        contentValues.put("image", person.getImageAsBytes());
-        db.insert("person", null, contentValues);
+        ContentValues values = personToContentValues(person);
+        db.insert(PersonTable.TABLE_NAME, null, values);
     }
 
     public List<Person> getAllPersons() {
+        String sortOrder = PersonTable._ID + " ASC";
+        String sql = PersonTable.SQL_SELECT_ALL_COLUMNS + " ORDER BY " + sortOrder;
+        Cursor cursor = db.rawQuery(sql, null);
+
         List<Person> result = new ArrayList<>();
-
-        Cursor cursor = db.rawQuery("SELECT id, name, timestamp, birthday, weight, image FROM person",
-                new String[]{});
-
         while (cursor.moveToNext()) {
-            Person person = convertToPerson(cursor);
+            Person person = cursorToPerson(cursor);
             result.add(person);
         }
         cursor.close();
         return result;
     }
 
-    public Person getPersonById(int id) {
+    public Person getPerson(int id) {
+        String selection = PersonTable._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+        String sql = PersonTable.SQL_SELECT_ALL_COLUMNS + " WHERE " + selection;
+        Cursor cursor = db.rawQuery(sql, selectionArgs);
+
         Person result = null;
-
-        Cursor cursor = db.rawQuery("SELECT id, name, timestamp, birthday, weight, image FROM person WHERE id = ?",
-                new String[]{String.valueOf(id)});
-
         if (cursor.moveToFirst()) {
-            result = convertToPerson(cursor);
+            result = cursorToPerson(cursor);
         }
         cursor.close();
         return result;
     }
 
-    public void deletePersonById(int id) {
-        db.delete("person", "id = ?", new String[]{String.valueOf(id)});
+    public void deletePerson(int id) {
+        String selection = PersonTable._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+        db.delete(PersonTable.TABLE_NAME, selection, selectionArgs);
     }
 
     public void updatePerson(Person person) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("id", person.getId());
-        contentValues.put("name", person.getName());
-        contentValues.put("timestamp", utcDateFormat.formatDateTime(person.getTimestamp()));
-        contentValues.put("birthday", utcDateFormat.formatDate(person.getBirthday()));
-        contentValues.put("weight", person.getWeight());
-        contentValues.put("image", person.getImageAsBytes());
+        ContentValues values = personToContentValues(person);
 
-        String[] parameter = new String[]{String.valueOf(person.getId())};
-
-        db.update("person", contentValues, "id = ?", parameter);
+        String selection = PersonTable._ID + " = ?";
+        String[] selectionArgs = {String.valueOf(person.getId())};
+        db.update(PersonTable.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    private Person convertToPerson(Cursor cursor) {
-        int id = cursor.getInt(cursor.getColumnIndex("id"));
+    private ContentValues personToContentValues(Person person) {
+        ContentValues values = new ContentValues();
+        values.put(PersonTable._ID, person.getId());
+        values.put(PersonTable.COLUMN_NAME_NAME, person.getName());
+        values.put(PersonTable.COLUMN_NAME_TIMESTAMP, utcDateFormat.formatDateTime(person.getTimestamp()));
+        values.put(PersonTable.COLUMN_NAME_BIRTHDAY, utcDateFormat.formatDate(person.getBirthday()));
+        values.put(PersonTable.COLUMN_NAME_WEIGHT, person.getWeight());
+        values.put(PersonTable.COLUMN_NAME_IMAGE, person.getImageAsBytes());
+        return values;
+    }
 
-        String name = cursor.getString(cursor.getColumnIndex("name"));
-
-        Date timestamp = utcDateFormat.parseDateTime(cursor.getString(cursor.getColumnIndex("timestamp")));
-
-        Date birthday = utcDateFormat.parseDate(cursor.getString(cursor.getColumnIndex("birthday")));
+    private Person cursorToPerson(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex(PersonTable._ID));
+        String name = cursor.getString(cursor.getColumnIndex(PersonTable.COLUMN_NAME_NAME));
+        Date timestamp = utcDateFormat.parseDateTime(cursor.getString(cursor.getColumnIndex(PersonTable.COLUMN_NAME_TIMESTAMP)));
+        Date birthday = utcDateFormat.parseDate(cursor.getString(cursor.getColumnIndex(PersonTable.COLUMN_NAME_BIRTHDAY)));
 
         Float weight = null;
-        if (!cursor.isNull(cursor.getColumnIndex("weight"))) {
-            weight = cursor.getFloat(cursor.getColumnIndex("weight"));
+        if (!cursor.isNull(cursor.getColumnIndex(PersonTable.COLUMN_NAME_WEIGHT))) {
+            weight = cursor.getFloat(cursor.getColumnIndex(PersonTable.COLUMN_NAME_WEIGHT));
         }
 
         byte[] imageAsBytes = null;
-        if (!cursor.isNull(cursor.getColumnIndex("image"))) {
-            imageAsBytes = cursor.getBlob(cursor.getColumnIndex("image"));
+        if (!cursor.isNull(cursor.getColumnIndex(PersonTable.COLUMN_NAME_IMAGE))) {
+            imageAsBytes = cursor.getBlob(cursor.getColumnIndex(PersonTable.COLUMN_NAME_IMAGE));
         }
 
         Person person = new Person();
