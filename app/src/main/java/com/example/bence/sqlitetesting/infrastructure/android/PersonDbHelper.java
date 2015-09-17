@@ -1,4 +1,4 @@
-package com.example.bence.sqlitetesting.infrastructure;
+package com.example.bence.sqlitetesting.infrastructure.android;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

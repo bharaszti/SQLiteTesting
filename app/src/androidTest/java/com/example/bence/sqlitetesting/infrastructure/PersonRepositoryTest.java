@@ -3,6 +3,7 @@ package com.example.bence.sqlitetesting.infrastructure;
 import android.test.AndroidTestCase;
 
 import com.example.bence.sqlitetesting.domain.Person;
+import com.example.bence.sqlitetesting.infrastructure.dao.MyPersonRepositoryImpl;
 import com.example.bence.sqlitetesting.util.UtcDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
          - BLOB
 
         Classes for contract and helper: see http://developer.android.com/training/basics/data-storage/databases.html
+        Classes for Repository/DAO design.
 
         TODO: how to use a test DB instance?
 
@@ -47,7 +49,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        repository = new PersonRepository(this.mContext);
+        repository = new MyPersonRepositoryImpl(this.mContext); // or PersonRepositoryImpl
         boolean success = repository.open();
         assertTrue(success);
 
