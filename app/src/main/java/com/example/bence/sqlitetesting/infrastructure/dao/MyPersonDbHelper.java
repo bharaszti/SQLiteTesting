@@ -22,6 +22,7 @@ public class MyPersonDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // TODO: use AssetManager: context.getAssets()
         db.execSQL(FileUtil.readResourceFile("create-database-v1.sql"));
     }
 

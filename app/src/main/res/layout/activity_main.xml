@@ -5,7 +5,60 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create"
+            android:id="@+id/createButton"
+            android:onClick="onCreateButtonClick"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update"
+            android:id="@+id/updateButton"
+            android:onClick="onUpdateButtonClick"
+            android:layout_alignTop="@+id/createButton"
+            android:layout_toRightOf="@+id/createButton"
+            android:layout_toEndOf="@+id/createButton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:id="@+id/deleteButton"
+            android:onClick="onDeleteButtonClick"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/updateButton"
+            android:layout_toEndOf="@+id/updateButton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Drop"
+            android:id="@+id/dropButton"
+            android:onClick="onDropButtonClick"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/deleteButton"
+            android:layout_toEndOf="@+id/deleteButton" />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/personsListView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/createButton" />
+    </RelativeLayout>
 </RelativeLayout>

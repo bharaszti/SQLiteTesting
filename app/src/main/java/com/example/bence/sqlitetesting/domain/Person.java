@@ -86,7 +86,16 @@ public class Person {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        ToStringBuilder builder = new ToStringBuilder(this);
+        builder.setDefaultStyle(ToStringStyle.SHORT_PREFIX_STYLE);
+        return builder.
+                append("id", id).
+                append("name", name).
+                append("birthday", birthday).
+                append("weight", weight).
+                append("timestamp", timestamp).
+                append("imageAsBytes", imageAsBytes).
+                toString();
     }
 
 }

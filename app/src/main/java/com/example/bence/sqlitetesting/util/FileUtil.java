@@ -1,5 +1,7 @@
 package com.example.bence.sqlitetesting.util;
 
+import android.content.res.AssetManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ public class FileUtil {
 
     public static String readResourceFile(String fileName) {
         String assetName = "/assets/" + fileName;
+
         InputStream inputStream = FileUtil.class.getResourceAsStream(assetName);
         if (inputStream == null) {
             throw new ApplicationException(String.format("Resource not found: %s", assetName));
