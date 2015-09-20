@@ -32,6 +32,11 @@ public class MyPersonRepositoryImpl implements PersonRepository {
     }
 
     @Override
+    public void close() {
+        database.close();
+    }
+
+    @Override
     public boolean drop() {
         database.close();
         return dbHelper.dropDatabase();
@@ -61,4 +66,5 @@ public class MyPersonRepositoryImpl implements PersonRepository {
     public void updatePerson(Person person) {
         personDao.updatePerson(person);
     }
+
 }

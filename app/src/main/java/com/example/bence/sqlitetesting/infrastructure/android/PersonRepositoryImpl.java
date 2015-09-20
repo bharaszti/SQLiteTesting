@@ -36,7 +36,13 @@ public class PersonRepositoryImpl implements com.example.bence.sqlitetesting.inf
     }
 
     @Override
+    public void close() {
+        db.close();
+    }
+
+    @Override
     public boolean drop() {
+        db.close();
         return context.deleteDatabase(PersonDbHelper.DATABASE_NAME);
     }
 

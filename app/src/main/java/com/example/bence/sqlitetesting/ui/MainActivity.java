@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private ArrayAdapter personsAdapter;
     private PersonRepository personRepository;
 
-    private Integer selectedPosition;
+    private Integer selectedPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +45,13 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         personRepository = new MyPersonRepositoryImpl(this);
         personRepository.open();
         updateList(personRepository.getAllPersons());
+        updateSelectedPosition();
+    }
+
+    @Override
+    protected void onStop() {
+        personRepository.close();
+        super.onStop();
     }
 
     @Override

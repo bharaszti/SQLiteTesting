@@ -1,6 +1,7 @@
 package com.example.bence.sqlitetesting.infrastructure;
 
 import android.test.AndroidTestCase;
+import android.test.RenamingDelegatingContext;
 
 import com.example.bence.sqlitetesting.domain.Person;
 import com.example.bence.sqlitetesting.infrastructure.dao.MyPersonRepositoryImpl;
@@ -41,7 +42,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
         Classes for contract and helper: see http://developer.android.com/training/basics/data-storage/databases.html
         Classes for Repository/DAO design.
 
-        TODO: how to use a test DB instance?
+        Use RenamingDelegatingContext for database access
 
      */
 
@@ -49,7 +50,8 @@ public class PersonRepositoryTest extends AndroidTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        repository = new MyPersonRepositoryImpl(this.mContext); // or PersonRepositoryImpl
+        RenamingDelegatingContext context = new RenamingDelegatingContext(getContext(), "test_");
+        repository = new MyPersonRepositoryImpl(context); // or PersonRepositoryImpl
         boolean success = repository.open();
         assertTrue(success);
 
@@ -59,6 +61,7 @@ public class PersonRepositoryTest extends AndroidTestCase {
 
     @Override
     protected void tearDown() throws Exception {
+        repository.close();
         boolean success = repository.drop();
         assertTrue(success);
 

@@ -21,4 +21,6 @@ public interface PersonRepository {
     void deletePerson(int id);
 
     void updatePerson(Person person);
+
+    void close();
 }
