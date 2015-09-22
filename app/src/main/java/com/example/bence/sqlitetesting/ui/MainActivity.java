@@ -1,13 +1,18 @@
 package com.example.bence.sqlitetesting.ui;
 
+import android.app.AlertDialog;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.bence.sqlitetesting.R;
 import com.example.bence.sqlitetesting.domain.Person;
@@ -68,9 +73,10 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-
-        // TODO: about
+        if (id == R.id.action_about) {
+            openAboutDialog();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -151,9 +157,30 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         int count = personsAdapter.getCount();
         if (count == 0) {
             selectedPosition = null;
-        } else if (selectedPosition > count - 1) {
+        } else if (selectedPosition >= count) {
             selectedPosition = count - 1;
         }
+    }
+
+    public void openAboutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setPositiveButton("Close", null);
+
+        String title = "About SQLiteTesting";
+        builder.setTitle(title);
+
+        String message = "This is a simple example for " +
+                "integration testing the SQLite database access in Android " +
+                "(enabler for TDD of the persistence layer).\n" +
+                "Spike about Repository/DAO architecture over Contract/DbHelper approach.\n\n" +
+                "Author: Bence Haraszti\n\n" +
+                "Source code: https://github.com/bharaszti/SQLiteTesting";
+        SpannableString spannableMessage = new SpannableString(message);
+        Linkify.addLinks(spannableMessage, Linkify.ALL);
+        builder.setMessage(spannableMessage);
+
+        AlertDialog dialog = builder.show();
+        ((TextView) dialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 }

@@ -12,6 +12,8 @@ public interface PersonRepository {
 
     boolean drop();
 
+    void close();
+
     void createPerson(Person person);
 
     List<Person> getAllPersons();
@@ -21,6 +23,4 @@ public interface PersonRepository {
     void deletePerson(int id);
 
     void updatePerson(Person person);
-
-    void close();
 }

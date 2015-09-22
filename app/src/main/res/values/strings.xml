@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SQLiteTesting</string>
+    <string name="action_about">About</string>
 
 </resources>
