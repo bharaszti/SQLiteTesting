@@ -1,5 +1,6 @@
 package com.example.bence.sqlitetesting.util;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
@@ -12,30 +13,18 @@ import java.io.InputStreamReader;
  */
 public class FileUtil {
 
-    public static String readResourceFile(String fileName) {
-        String assetName = "/assets/" + fileName;
-
-        InputStream inputStream = FileUtil.class.getResourceAsStream(assetName);
-        if (inputStream == null) {
-            throw new ApplicationException(String.format("Resource not found: %s", assetName));
-        }
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder stringBuilder = new StringBuilder();
-        String read = null;
+    public static String readAssetFile(Context context, String fileName) {
+        String result = null;
+        AssetManager assetManager = context.getAssets();
         try {
-            while ((read = bufferedReader.readLine()) != null) {
-                stringBuilder.append(read);
-            }
-            bufferedReader.close();
-            inputStream.close();
+            InputStream inputStream = assetManager.open(fileName);
+            byte[] buffer = new byte[inputStream.available()];
+            inputStream.read(buffer);
+            result = new String(buffer);
         } catch (IOException e) {
-            throw new ApplicationException(String.format("Failed to read resource: %s. Reason: %s",
-                    assetName, e.getMessage()));
+            throw new ApplicationException(String.format("Failed to read asset: %s. Reason: %s",
+                    fileName, e.getMessage()));
         }
-
-        String result = stringBuilder.toString();
         return result;
     }
-
 }

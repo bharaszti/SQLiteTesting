@@ -61,7 +61,6 @@ public class PersonRepositoryTest extends AndroidTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        repository.close();
         boolean success = repository.drop();
         assertTrue(success);
 

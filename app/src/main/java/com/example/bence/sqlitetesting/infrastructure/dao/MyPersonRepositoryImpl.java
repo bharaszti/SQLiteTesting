@@ -38,7 +38,7 @@ public class MyPersonRepositoryImpl implements PersonRepository {
 
     @Override
     public boolean drop() {
-        database.close();
+        close();
         return dbHelper.dropDatabase();
     }
 
